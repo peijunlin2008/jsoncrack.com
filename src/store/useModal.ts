@@ -1,51 +1,20 @@
-import ReactGA from "react-ga4";
 import { create } from "zustand";
-import { Modal } from "src/containers/Modals";
-import useUser from "./useUser";
-
-type ModalState = {
-  [key in Modal]: boolean;
-};
+import { type Modal, modalComponents } from "src/features/modals/ModalController";
 
 interface ModalActions {
-  setVisible: (modal: Modal) => (visible: boolean) => void;
+  setVisible: (name: Modal, open: boolean) => void;
 }
 
-const initialStates: ModalState = {
-  clear: false,
-  cloud: false,
-  download: false,
-  import: false,
-  account: false,
-  node: false,
-  settings: false,
-  share: false,
-  login: false,
-  premium: false,
-  jwt: false,
-  schema: false,
-  cancelPremium: false,
-  review: false,
-  jq: false,
-};
+type ModalState = Record<Modal, boolean>;
 
-const authModals: Modal[] = ["cloud", "account"];
-const premiumModals: Modal[] = [];
+const initialStates: ModalState = modalComponents.reduce(
+  (acc, { key }) => ({ ...acc, [key]: false }),
+  {} as ModalState
+);
 
 const useModal = create<ModalState & ModalActions>()(set => ({
   ...initialStates,
-  setVisible: modal => visible => {
-    const user = useUser.getState();
-
-    if (authModals.includes(modal) && !user.isAuthenticated) {
-      return set({ login: true });
-    } else if (premiumModals.includes(modal) && !user.premium) {
-      return set({ premium: true });
-    }
-
-    if (visible) ReactGA.event({ category: "Modal View", action: `modal_view_${modal}` });
-    set({ [modal]: visible });
-  },
+  setVisible: (name, open) => set({ [name]: open }),
 }));
 
 export default useModal;

@@ -1,16 +1,7 @@
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-  DocumentInitialProps,
-} from "next/document";
+import type { DocumentContext, DocumentInitialProps } from "next/document";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import { ColorSchemeScript } from "@mantine/core";
 import { ServerStyleSheet } from "styled-components";
-import { createGetInitialProps } from "@mantine/next";
-import { SeoTags } from "src/components/SeoTags";
-
-const getInitialProps = createGetInitialProps();
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
@@ -23,7 +14,7 @@ class MyDocument extends Document {
           enhanceApp: App => props => sheet.collectStyles(<App {...props} />),
         });
 
-      const initialProps = await getInitialProps(ctx);
+      const initialProps = await Document.getInitialProps(ctx);
 
       return {
         ...initialProps,
@@ -43,14 +34,7 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <SeoTags
-            description="Innovative and open-source visualization application that transforms various data formats, such as JSON, YAML, XML, CSV and more, into interactive graphs."
-            title="JSON Crack - Visualize Data to Graphs"
-            image="https://jsoncrack.com/assets/jsoncrack.png"
-          />
-          <meta name="theme-color" content="#36393E" />
-          <link rel="manifest" href="/manifest.json" />
-          <link rel="icon" href="/favicon.ico" />
+          <ColorSchemeScript />
         </Head>
         <body>
           <Main />
